@@ -13,3 +13,4 @@ class Orgao(ModelBase, Nome):
     telefone:Mapped[str] = mapped_column(String(10),nullable=False)
 
     ocorrencias:Mapped[List["Ocorrencia"]] = relationship(back_populates="orgao")
+    equipes:Mapped[List['Equipe_manutencao']] = relationship(back_populates="orgao", cascade="all, delete-orphan")

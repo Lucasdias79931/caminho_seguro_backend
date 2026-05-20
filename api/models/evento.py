@@ -1,5 +1,6 @@
 from sqlalchemy import ForeignKey, Enum, CheckConstraint, Text, DateTime, func
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, NUMERIC
+from decimal import Decimal
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from typing import List
@@ -48,6 +49,7 @@ class Obstaculo(ModelBase, Descricao):
 
 
 class Ocorrencia(ModelBase, Descricao):
+    __tablename__ = "ocorrencia"
     id_obstaculo:Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("obstaculo.id"), nullable=False) 
     id_cidadao:Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("cidadao.id"), nullable=False)
     id_orgao:Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("orgao.id"), nullable=False)
@@ -63,7 +65,7 @@ class Vistoria(ModelBase, Descricao):
     __tablename__ = "vistoria"
 
     id_ocorrencia:Mapped[str] = mapped_column(UUID(as_uuid=True), ForeignKey("ocorrencia.id"),nullable=False)
-    id_fiscal:Mapped[str] = mapped_column(UUID(as_uuid=True), ForeignKey("fiscal.id"),nullable=False)
+    id_fiscal:Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("fiscal.id"),nullable=False)
     laudo:Mapped[str] = mapped_column(Text)
     prazo_adequacao:Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -73,3 +75,40 @@ class Vistoria(ModelBase, Descricao):
 
     fiscal:Mapped["Fiscal"] = relationship(back_populates="vistoria")
     ocorrencia:Mapped["Ocorrencia"] = relationship(back_populates="vistoria")
+    intervencao:Mapped["Intervencao"] = relationship(back_populates="vistoria")
+
+class Intervencao(ModelBase, Descricao):
+    __tablename__ = "intervencao"
+
+    id_vistoria: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), 
+        ForeignKey("vistoria.id"), 
+        nullable=False
+    )
+    
+    id_equipe: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), 
+        ForeignKey("equipe_manutencao.id"), 
+        nullable=False
+    )
+
+    custo_estimado: Mapped[Decimal] = mapped_column(
+        NUMERIC(precision=10, scale=2), 
+        nullable=False
+    )
+
+    from datetime import datetime
+
+    data_registro: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False
+    )
+
+    data_conclusao: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
+    vistoria: Mapped["Vistoria"] = relationship(back_populates="intervencao")
+    equipe: Mapped["Equipe_manutencao"] = relationship(back_populates="intervencoes")

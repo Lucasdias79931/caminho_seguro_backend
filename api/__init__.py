@@ -12,7 +12,8 @@ from .models import (
     Ocorrencia, 
     Imagem,
     Vistoria,
-    Orgao
+    Orgao,
+    Intervencao
 )
 
 __all__ = [
@@ -29,5 +30,6 @@ __all__ = [
     "Ocorrencia",
     "Imagem",
     "Vistoria",
-    "Orgao"
+    "Orgao",
+    "Intervencao"
 ]

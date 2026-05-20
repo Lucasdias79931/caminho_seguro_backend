@@ -8,7 +8,7 @@ from ..enums import STATUS
 
 class Imagem(ModelBase):
     __tablename__ = "imagem"
-    id_ocorrencia:Mapped[str] = mapped_column(UUID(as_uuid=True), ForeignKey("ocorrencia.id"), nullable=False)
+    id_ocorrencia:Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ocorrencia.id"), nullable=False)
     status:Mapped[STATUS] = mapped_column(
         Enum(STATUS, native_enum=False), 
         nullable=False,

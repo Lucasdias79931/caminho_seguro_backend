@@ -18,7 +18,8 @@ from api.models import (
     Ocorrencia, 
     Imagem,
     Vistoria,
-    Orgao 
+    Orgao,
+    Intervencao
 )
 from alembic import context
 
