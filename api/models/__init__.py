@@ -1,8 +1,11 @@
 from .database import Base, AsyncSessionLocal
 from .baseModel import ModelBase, Nome, Descricao
 from .local import Bairro, Rua
-from .obstaculo import Obstaculo
-
+from .evento import Obstaculo
+from .pessoa import Cidadao, Fiscal
+from .evento import Ocorrencia, Obstaculo, Vistoria
+from .imagem import Imagem
+from .orgao import Orgao
 __all__ = [
     "Base",
     "AsyncSessionLocal",
@@ -11,5 +14,11 @@ __all__ = [
     "Descricao",
     "Bairro", 
     "Rua",
-    'Obstaculo'
+    'Obstaculo',
+    "Cidadao", 
+    "Fiscal",
+    "Ocorrencia",
+    "Imagem",
+    "Vistoria",
+    "Orgao"
 ]

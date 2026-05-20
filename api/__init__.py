@@ -1,5 +1,19 @@
-from .models import Base, AsyncSessionLocal , ModelBase, Nome, Descricao,  Bairro, Rua, Obstaculo
-
+from .models import (
+    Base, 
+    AsyncSessionLocal,
+    ModelBase, 
+    Nome, 
+    Descricao,  
+    Bairro, 
+    Rua, 
+    Obstaculo, 
+    Cidadao, 
+    Fiscal, 
+    Ocorrencia, 
+    Imagem,
+    Vistoria,
+    Orgao
+)
 
 __all__ = [
     "Base",
@@ -9,5 +23,11 @@ __all__ = [
     "Descricao",
     "Bairro", 
     "Rua",
-    'Obstaculo'
+    'Obstaculo',
+    "Cidadao", 
+    "Fiscal",
+    "Ocorrencia",
+    "Imagem",
+    "Vistoria",
+    "Orgao"
 ]

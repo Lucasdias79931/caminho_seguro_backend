@@ -19,15 +19,9 @@ class Settings(BaseSettings):
     REDIS_PORT:int
     API_KEY:str
 
-    @property
-    def CELERY_BROKER_URL(self):
-        return (
-            f"amqp://{self.RABBITMQ_USER}:{self.RABBITMQ_PASS}"
-            f"@{self.RABBITMQ_HOST}:{self.RABBITMQ_PORT}//"
-        )
-
+ 
     model_config = SettingsConfigDict(
-        env_file="../.env",
+        env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore"
     )

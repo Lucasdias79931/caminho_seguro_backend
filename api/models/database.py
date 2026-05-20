@@ -12,8 +12,8 @@ class Base(DeclarativeBase):
 
 
 engine = create_async_engine(
-    settings.POSTGRES_DEV,
-    echo=True,  # remove em produção
+    settings.POSTGRE_DEV,
+    echo=True, 
 )
 
 
