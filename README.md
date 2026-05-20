@@ -16,3 +16,18 @@
 
 
 ```
+
+
+
+
+# Como rodar
+
+```
+
+    docker (Somente o postgres por enquanto):
+
+        docker compose up --build -d
+
+    alembic (para criar as tabelas): alembic upgrad head
+
+```
