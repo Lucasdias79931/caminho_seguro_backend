@@ -9,7 +9,9 @@ class Cidadao(ModelBase, Pessoa):
     __tablename__ = "cidadao"
 
 
-    ocorrencia:Mapped["Ocorrencia"] = relationship(back_populates="cidadao")
+    ocorrencias: Mapped[list["Ocorrencia"]] = relationship(
+        back_populates="cidadao"
+    )
     
 
 

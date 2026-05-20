@@ -14,7 +14,7 @@ class Bairro(Nome,Descricao,ModelBase):
 class Rua(Nome,Descricao,ModelBase):
     __tablename__ = "rua"
     
-    id_bairro: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("bairro.id"))
+    id_bairro: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("bairro.id"), index=True)
     cep: Mapped[str] = mapped_column(CHAR(36))
 
     bairro: Mapped["Bairro"] = relationship(back_populates="ruas")

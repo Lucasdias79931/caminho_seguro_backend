@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Enum, CheckConstraint, Text, DateTime, func
+from sqlalchemy import ForeignKey, Enum, CheckConstraint, Text, DateTime, func, Index
 from sqlalchemy.dialects.postgresql import UUID, NUMERIC
 from decimal import Decimal
 from sqlalchemy.orm import relationship, Mapped, mapped_column
@@ -60,11 +60,13 @@ class Ocorrencia(ModelBase, Descricao):
     imagens:Mapped[List["Imagem"]] = relationship(back_populates="ocorrencia", cascade="all, delete-orphan")
     vistoria:Mapped["Ocorrencia"] = relationship(back_populates="ocorrencia")
 
-
+    __table_args__ = (
+        Index("idx_ocorrencia_obstaculo_data", "id_obstaculo", "created_at"),
+    )
 class Vistoria(ModelBase, Descricao):
     __tablename__ = "vistoria"
 
-    id_ocorrencia:Mapped[str] = mapped_column(UUID(as_uuid=True), ForeignKey("ocorrencia.id"),nullable=False)
+    id_ocorrencia:Mapped[str] = mapped_column(UUID(as_uuid=True), ForeignKey("ocorrencia.id"),nullable=False, index=True)
     id_fiscal:Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("fiscal.id"),nullable=False)
     laudo:Mapped[str] = mapped_column(Text)
     prazo_adequacao:Mapped[datetime] = mapped_column(
@@ -97,7 +99,7 @@ class Intervencao(ModelBase, Descricao):
         nullable=False
     )
 
-    from datetime import datetime
+    
 
     data_registro: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
