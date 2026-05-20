@@ -18,3 +18,5 @@ class Rua(Nome,Descricao,ModelBase):
     cep: Mapped[str] = mapped_column(CHAR(36))
 
     bairro: Mapped["Bairro"] = relationship(back_populates="ruas")
+
+    obstaculos: Mapped['Obstaculo'] = relationship(back_populates="rua", cascade="all, delete-orphan")

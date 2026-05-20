@@ -1,7 +1,7 @@
 from .database import Base, AsyncSessionLocal
 from .baseModel import ModelBase, Nome, Descricao
 from .local import Bairro, Rua
-
+from .obstaculo import Obstaculo
 
 __all__ = [
     "Base",
@@ -10,5 +10,6 @@ __all__ = [
     "Nome", 
     "Descricao",
     "Bairro", 
-    "Rua"
+    "Rua",
+    'Obstaculo'
 ]
