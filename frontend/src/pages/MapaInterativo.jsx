@@ -187,7 +187,7 @@ export default function MapaInterativo() {
                     <img 
                       src={selecionada.imagem_url} 
                       alt="Foto do obstáculo" 
-                      style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }} 
+                      style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }} 
                     />
                   </div>
                 )}

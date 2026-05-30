@@ -8,10 +8,10 @@ import { BookOpen, Award, Sparkles, Target, Users } from 'lucide-react';
 
 export default function Sobre() {
   const devs = [
-    { nome: 'Luis Jackson', github: 'https://github.com/Luisjackson', cargo: 'Banco de Dados & API', foto: imgLuis },
-    { nome: 'Lucas Silva', github: 'https://github.com/Lucasdias79931', cargo: 'Arquitetura & Front-End', foto: imgLucas },
-    { nome: 'Cristian', github: 'https://github.com/ScoobyTT', cargo: 'Banco de Dados & Queries', foto: imgCristian },
-    { nome: 'Rafael', github: 'https://github.com/rssantan4', cargo: 'Modelagem & Infraestrutura', foto: imgRafael }
+    { nome: 'Luis Jackson', github: 'https://github.com/Luisjackson', cargo: 'BBA & API', foto: imgLuis },
+    { nome: 'Lucas Silva', github: 'https://github.com/Lucasdias79931', cargo: 'Banco de Dados & Queries', foto: imgLucas },
+    { nome: 'Cristian Amor', github: 'https://github.com/ScoobyTT', cargo: 'Arquitetura & Front-End', foto: imgCristian },
+    { nome: 'Rafael Santana', github: 'https://github.com/rssantan4', cargo: 'Modelagem & Infraestrutura', foto: imgRafael }
   ];
 
   return (

@@ -22,6 +22,7 @@ import {
 export default function Fiscalizacao() {
   const [fiscais, setFiscais] = useState([]);
   const [equipes, setEquipes] = useState([]);
+  const [ocorrencias, setOcorrencias] = useState([]);
   const [ocorrenciasPendentes, setOcorrenciasPendentes] = useState([]);
   const [vistoriasRealizadas, setVistoriasRealizadas] = useState([]);
   const [intervencoes, setIntervencoes] = useState([]);
@@ -57,6 +58,7 @@ export default function Fiscalizacao() {
       
       setFiscais(listFiscais);
       setEquipes(listEquipes);
+      setOcorrencias(listOcorrencias);
       
       // Filtra ocorrências que necessitam de vistoria (Aberto ou Em Vistoria)
       setOcorrenciasPendentes(listOcorrencias.filter(o => o.status !== 'RESOLVIDO'));
@@ -311,7 +313,7 @@ export default function Fiscalizacao() {
                       {correspondente ? correspondente.obstaculo.rua.nome : "Calçada Registrada"}
                     </h4>
                     <p style={styles.historyBairro}>
-                      Fiscal: {v.fiscal.nome} • Vistoriado em {new Date(v.created_at).toLocaleDateString('pt-BR')}
+                      Fiscal: {v.fiscal?.nome || "Fiscal Técnico"} • Vistoriado em {v.created_at ? new Date(v.created_at).toLocaleDateString('pt-BR') : "Data Indefinida"}
                     </p>
                   </div>
                   <span style={styles.historyBadge}>VISTORIADA</span>
