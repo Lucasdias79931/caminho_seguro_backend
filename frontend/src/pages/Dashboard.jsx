@@ -221,7 +221,7 @@ export default function Dashboard() {
       {/* Header com indicador de processamento dos filtros */}
       <div style={styles.header}>
         <div>
-          <h2 style={styles.title}>Dashboard de Mobilidade e Gestão Urbana</h2>
+          <h2 style={styles.title} className="gradient-text">Dashboard de Mobilidade e Gestão Urbana</h2>
           <p style={styles.subtitle}>Painel analítico integrado de acessibilidade e fiscalização de calçadas</p>
         </div>
         <div style={{ ...styles.badge, borderColor: processandoFiltro ? '#f59e0b' : 'rgba(16, 185, 129, 0.2)' }}>

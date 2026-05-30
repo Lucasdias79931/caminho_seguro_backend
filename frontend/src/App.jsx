@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import MapaInterativo from './pages/MapaInterativo';
 import Ocorrencias from './pages/Ocorrencias';
 import Fiscalizacao from './pages/Fiscalizacao';
+import Sobre from './pages/Sobre';
 
 export default function App() {
   const [paginaAtiva, setPaginaAtiva] = useState('dashboard');
@@ -18,6 +19,8 @@ export default function App() {
         return <Ocorrencias />;
       case 'fiscalizacao':
         return <Fiscalizacao />;
+      case 'sobre':
+        return <Sobre />;
       default:
         return <Dashboard />;
     }

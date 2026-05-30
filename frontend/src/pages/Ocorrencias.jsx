@@ -138,7 +138,7 @@ export default function Ocorrencias() {
       {/* Header */}
       <div style={styles.header}>
         <div>
-          <h2 style={styles.title}>Ocorrências Relatadas</h2>
+          <h2 style={styles.title} className="gradient-text">Ocorrências Relatadas</h2>
           <p style={styles.subtitle}>Gerencie e relate novos pontos de calçadas hostis e problemas de acessibilidade</p>
         </div>
         <button onClick={() => setModalAberto(true)} style={styles.btnRelatar}>

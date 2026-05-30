@@ -142,3 +142,11 @@ h1, h2, h3, h4 {
 .logo-btn-interactive:hover img {
   transform: scale(1.04);
 }
+
+.gradient-text {
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}

@@ -99,7 +99,7 @@ export default function MapaInterativo() {
   return (
     <div>
       <div style={styles.header}>
-        <h2 style={styles.title}>Mapa Temático de Barreiras Urbanas</h2>
+        <h2 style={styles.title} className="gradient-text">Mapa Temático de Barreiras Urbanas</h2>
         <p style={styles.subtitle}>Clique nos marcadores para ver os detalhes da calçada e os laudos dos fiscais</p>
       </div>
 

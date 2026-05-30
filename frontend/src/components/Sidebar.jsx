@@ -4,7 +4,8 @@ import {
   Map, 
   AlertTriangle, 
   ClipboardCheck, 
-  Activity
+  Activity,
+  Info
 } from 'lucide-react';
 import logo from '../assets/logo.png';
 
@@ -24,6 +25,7 @@ export default function Sidebar({ paginaAtiva, setPaginaAtiva }) {
     { id: 'mapa', label: 'Mapa', icon: Map },
     { id: 'ocorrencias', label: 'Ocorrências', icon: AlertTriangle },
     { id: 'fiscalizacao', label: 'Fiscal', icon: ClipboardCheck },
+    { id: 'sobre', label: 'Sobre', icon: Info },
   ];
 
   // Mobile Bottom Navigation Bar View
@@ -39,13 +41,13 @@ export default function Sidebar({ paginaAtiva, setPaginaAtiva }) {
               onClick={() => setPaginaAtiva(item.id)}
               style={{
                 ...styles.mobileBtn,
-                color: isActive ? '#10b981' : '#94a3b8',
+                color: isActive ? '#06b6d4' : '#94a3b8',
               }}
             >
               <Icon 
                 size={20} 
                 style={{ 
-                  color: isActive ? '#10b981' : '#94a3b8',
+                  color: isActive ? '#06b6d4' : '#94a3b8',
                   transform: isActive ? 'scale(1.1)' : 'scale(1)',
                   transition: 'transform 0.2s ease'
                 }} 
@@ -53,7 +55,7 @@ export default function Sidebar({ paginaAtiva, setPaginaAtiva }) {
               <span style={{ 
                 ...styles.mobileBtnLabel, 
                 fontWeight: isActive ? '600' : '400',
-                color: isActive ? '#10b981' : '#64748b'
+                color: isActive ? '#06b6d4' : '#64748b'
               }}>
                 {item.label}
               </span>
@@ -98,12 +100,12 @@ export default function Sidebar({ paginaAtiva, setPaginaAtiva }) {
                 size={20} 
                 style={{
                   marginRight: '12px',
-                  color: isActive ? '#10b981' : '#94a3b8',
+                  color: isActive ? '#06b6d4' : '#94a3b8',
                   transition: 'color 0.2s ease'
                 }} 
               />
               <span style={{ fontWeight: isActive ? '600' : '400' }}>
-                {item.id === 'dashboard' ? 'Visão Geral' : item.id === 'mapa' ? 'Mapa de Calçadas' : item.id === 'fiscalizacao' ? 'Área do Fiscal' : item.label}
+                {item.id === 'dashboard' ? 'Visão Geral' : item.id === 'mapa' ? 'Mapa de Calçadas' : item.id === 'fiscalizacao' ? 'Área do Fiscal' : item.id === 'sobre' ? 'Sobre o Projeto' : item.label}
               </span>
               {isActive && <div style={styles.activeIndicator} />}
             </button>
@@ -185,9 +187,9 @@ const styles = {
     fontFamily: "'Inter', sans-serif",
   },
   navButtonActive: {
-    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    backgroundColor: 'rgba(6, 182, 212, 0.08)',
     color: '#f8fafc',
-    border: '1px solid rgba(16, 185, 129, 0.15)',
+    border: '1px solid rgba(6, 182, 212, 0.15)',
   },
   activeIndicator: {
     position: 'absolute',
@@ -195,7 +197,7 @@ const styles = {
     top: '25%',
     height: '50%',
     width: '3px',
-    backgroundColor: '#10b981',
+    backgroundColor: '#06b6d4',
     borderRadius: '0 4px 4px 0',
   },
   footer: {
