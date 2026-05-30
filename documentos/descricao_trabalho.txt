@@ -1,0 +1,117 @@
+Disciplina: Banco de Dados II
+
+
+Projeto Laboratório de Dados para Cidades Sustentáveis.
+
+
+1. Descrição Geral
+
+
+Este projeto tem como objetivo o desenvolvimento de um ecossistema de banco de
+dados open-source, orientado à resolução de problemas reais enfrentados por
+cidades em todo o mundo, utilizando a metodologia PBL (Problem-Based Learning) e
+alinhado à ODS 11 - Cidades e Comunidades Sustentáveis.
+
+As ODS (Objetivos de Desenvolvimento Sustentável) constituem uma agenda global
+estabelecida pela Organização das Nações Unidas (ONU), composta por 17 objetivos
+interdependentes que visam promover o desenvolvimento sustentável até 2030,
+abrangendo dimensões sociais, econômicas e ambientais. Nesse contexto, a ODS 11
+– Cidades e Comunidades Sustentáveis tem como propósito tornar os espaços
+urbanos mais inclusivos, seguros, resilientes e sustentáveis, abordando temas como
+mobilidade urbana, planejamento territorial, gestão de resíduos, habitação, acesso a
+serviços públicos e redução de impactos ambientais.
+
+
+
+
+Além da ODS 11, o projeto poderá estabelecer conexões secundárias com outras
+ODS, de acordo com a secretaria escolhida e o problema abordado. Destacam-se, por
+exemplo: a ODS 3 (Saúde e Bem-Estar), no contexto de sistemas de gestão
+hospitalar e epidemiológica; a ODS 4 (Educação de Qualidade), relacionada à gestão
+educacional e indicadores de desempenho escolar; a ODS 6 (Água Potável e
+Saneamento), voltada ao monitoramento de recursos hídricos e saneamento básico;
+a ODS 9 (Indústria, Inovação e Infraestrutura), no desenvolvimento de soluções
+tecnológicas e sistemas inteligentes; e a ODS 13 (Ação Contra a Mudança Global do
+Clima), especialmente em projetos voltados ao monitoramento ambiental e
+sustentabilidade urbana.
+
+Dessa forma, o projeto não apenas consolida competências técnicas em banco de
+dados, mas também promove uma visão sistêmica e aplicada da tecnologia como
+instrumento de transformação social e urbana.
+Disciplina: Banco de Dados II
+
+
+
+
+2. Critérios para a Concepção e Avaliação do Projeto
+
+
+
+
+                                                                                        Pontuação
+Item        Entregável                                Descrição
+                                                                                         Máxima
+ 1       Contextualização        Texto com o levantamento de requisitos,                   1,0
+                                 problematização, justificativa da ODS escolhida e
+                                 possibilidades que o projeto viabiliza.
+ 2       Modelagem Inicial       Definição de no mínimo 6 entidades e suas                 1,0
+                                 possibilidades de integração.
+ 3       Modelo Conceitual       Construção do diagrama entidade-relacionamento            1,0
+                                 (ER).
+ 4         Modelo Lógico         Transformação do modelo conceitual para o modelo          1,0
+                                 relacional.
+ 5         Modelo Físico         Implementação do modelo no SGBD com definição de          1,0
+                                 tipos e estruturas.
+ 6      Dicionário de Dados      Documentação detalhada dos atributos, tipos e             1,0
+                                 restrições.
+ 7           Script DDL          Arquivo SQL para criação completa do banco de             1,0
+                                 dados.
+ 8     Regras de Integridade     Implementação de PKs, FKs e constraints conforme o        1,0
+                                 domínio e considerando os requisitos.
+ 9           Indexação           Criação de índices para melhoria de performance.
+                                 Descrição e justificativa dos tipos de índices
+                                 utilizados.
+10     Consultas Operacionais    Mínimo de 5 consultas (enunciado + código) voltadas       1,0
+                                 ao nível operacional.
+11       Consultas Táticas       Mínimo de 5 consultas (enunciado + código) voltadas       1,0
+                                 ao nível tático.
+12     Consultas Estratégicas    Mínimo de 5 consultas (enunciado + código) voltadas       1,0
+                                 ao nível estratégico.
+13      Árvores de Consulta      Apresentação e explicação de pelo menos 2 árvores         1,0
+                                 de consultas otimizadas.
+14     Procedures (Select sem    Mínimo de 4 stored procedures de consulta sem             1,0
+             parâmetro)          parâmetros.
+15     Procedures (Select com    Mínimo de 4 stored procedures de consulta com             1,0
+             parâmetro)          parâmetros.
+16       Procedures (Insert)     Mínimo de 4 stored procedures de inserção com             1,0
+                                 tratamento de exceções.
+17      Procedures (Update)      Mínimo de 4 stored procedures de atualização.             1,0
+18        Exclusão Lógica        Mínimo de 4 procedures com exclusão lógica (Updade        1,0
+                                 em um atributo “status”).
+19     Procedures de Controle    4 procedures com lógica condicional (IF/CASE) para        1,0
+               (CRUD)            operações I, A, E, C.
+20      Triggers de Validação    Mínimo de 4 triggers para controlar consistência dos      1,0
+                                 dados (Ex: Validação de Idade mínima).
+21      Triggers de Auditoria    Mínimo de 2 triggers registrando alterações (tabela,      1,0
+                                 campo, valores, usuário, IP).
+22           Functions           Implementação de, no mínimo, 2 funções para regras        1,0
+                                 de negócio e cálculos reutilizáveis.
+23        Views Gerenciais       Mínimo de 3 visões para manter dados que possam           1,0
+                                 ser acessados por outros sistemas.
+24       Controle de Acesso      Definição de usuários e permissões por nível              1,0
+               (DCL)             hierárquico. Criar pelo menos 3 usuários com níveis
+                                 de acessos distintos.
+25     API’s de Persistência e   Implementação de integração com banco via API de          1,0
+          Acesso a Dados         acesso a dados (JDBC, ADO.Net, PyMySQL, etc.).
+Disciplina: Banco de Dados II
+
+
+4. Critérios para avaliação da apresentação:
+Apresentação: 40% da nota.
+
+1) Domínio do conteúdo (nota Individual) :25%
+2) Clareza da Apresentação:20%
+3) Concatenação de Ideias: 25%
+4) Resposta a Argumentações: 30%
+5) Originalidade Inovação: 20% (Extra)
+
