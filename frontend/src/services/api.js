@@ -53,6 +53,7 @@ let MOCK_OCORRENCIAS = [
     id_orgao: "o1",
     descricao: "Calçada com blocos de concreto totalmente soltos e buraco de 1 metro na via tátil, impedindo passagem de cadeirantes e deficientes visuais.",
     status: "ABERTO",
+    imagem_url: "https://images.unsplash.com/photo-1597200381847-30ec200eeb9a?auto=format&fit=crop&w=600&q=80",
     created_at: "2026-05-25T10:00:00Z",
     updated_at: "2026-05-25T10:00:00Z",
     obstaculo: {
@@ -75,6 +76,7 @@ let MOCK_OCORRENCIAS = [
     id_orgao: "o3",
     descricao: "Poste metálico de iluminação instalado exatamente no centro da rampa de acessibilidade da faixa de pedestres, obstruindo a travessia de cadeirantes.",
     status: "EM_VISTORIA",
+    imagem_url: "https://images.unsplash.com/photo-1584824486509-112e4181ff6b?auto=format&fit=crop&w=600&q=80",
     created_at: "2026-05-27T14:30:00Z",
     updated_at: "2026-05-28T09:00:00Z",
     obstaculo: {
@@ -260,6 +262,7 @@ export const OcorrenciaService = {
       id_orgao: orgaoSelecionado.id,
       descricao: dados.descricao,
       status: "ABERTO",
+      imagem_url: dados.imagem_url || '',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       obstaculo: {

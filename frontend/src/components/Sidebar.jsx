@@ -6,6 +6,7 @@ import {
   ClipboardCheck, 
   Activity
 } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 export default function Sidebar({ paginaAtiva, setPaginaAtiva }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -68,13 +69,14 @@ export default function Sidebar({ paginaAtiva, setPaginaAtiva }) {
     <aside style={styles.sidebar}>
       {/* Header Logo */}
       <div style={styles.logoContainer}>
-        <div style={styles.iconWrapper}>
-          <Activity size={24} color="#10b981" />
-        </div>
-        <div>
-          <h1 style={styles.title}>Caminho Seguro</h1>
-          <span style={styles.subtitle}>ODS 11 - Acessibilidade</span>
-        </div>
+        <button 
+          onClick={() => setPaginaAtiva('dashboard')} 
+          style={styles.logoButton}
+          className="logo-btn-interactive"
+          title="Ir para Visão Geral"
+        >
+          <img src={logo} alt="Caminho Seguro Logo" style={styles.logoImage} />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -138,31 +140,27 @@ const styles = {
   logoContainer: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: '40px',
-    padding: '0 8px',
-  },
-  iconWrapper: {
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    borderRadius: '12px',
-    padding: '10px',
-    marginRight: '12px',
-    display: 'flex',
-    alignItems: 'center',
     justifyContent: 'center',
-    border: '1px solid rgba(16, 185, 129, 0.2)',
+    marginBottom: '30px',
+    padding: '0 8px',
+    width: '100%',
   },
-  title: {
-    fontSize: '18px',
-    fontWeight: '700',
-    color: '#f8fafc',
-    fontFamily: "'Outfit', sans-serif",
-    lineHeight: '1.2',
+  logoButton: {
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    cursor: 'pointer',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    outline: 'none',
   },
-  subtitle: {
-    fontSize: '11px',
-    color: '#10b981',
-    fontWeight: '500',
-    letterSpacing: '0.05em',
+  logoImage: {
+    width: '100%',
+    maxHeight: '105px',
+    objectFit: 'contain',
+    display: 'block',
+    transition: 'transform 0.2s ease',
   },
   nav: {
     display: 'flex',

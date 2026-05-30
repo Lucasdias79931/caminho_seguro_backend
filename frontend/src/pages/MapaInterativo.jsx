@@ -59,6 +59,28 @@ export default function MapaInterativo() {
     "oc4": { top: '40%', left: '78%' }  // Direita
   };
 
+  const obterPosicaoEstavel = (id) => {
+    if (coords[id]) return coords[id];
+    
+    // Gera coordenadas estáveis baseadas em um hash simples do ID
+    let hashTop = 0;
+    let hashLeft = 0;
+    
+    for (let i = 0; i < id.length; i++) {
+      const char = id.charCodeAt(i);
+      if (i % 2 === 0) {
+        hashTop = (hashTop << 5) - hashTop + char;
+      } else {
+        hashLeft = (hashLeft << 5) - hashLeft + char;
+      }
+    }
+    
+    const topPct = 20 + Math.abs(hashTop % 60);
+    const leftPct = 15 + Math.abs(hashLeft % 65);
+    
+    return { top: `${topPct}%`, left: `${leftPct}%` };
+  };
+
   const getPinColor = (status) => {
     if (status === "ABERTO") return "#ef4444";
     if (status === "EM_VISTORIA") return "#f59e0b";
@@ -99,7 +121,7 @@ export default function MapaInterativo() {
             
             {/* Pins */}
             {ocorrencias.map((oc) => {
-              const pos = coords[oc.id] || { top: `${Math.random() * 60 + 20}%`, left: `${Math.random() * 60 + 20}%` };
+              const pos = obterPosicaoEstavel(oc.id);
               const isSelected = selecionada && selecionada.id === oc.id;
               const color = getPinColor(oc.status);
               
