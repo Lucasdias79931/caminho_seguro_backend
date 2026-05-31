@@ -127,12 +127,16 @@ h1, h2, h3, h4 {
   margin-left: 260px; /* Sidebar width */
   overflow-y: auto;
   min-height: 100vh;
-  z-index: 1;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app-container.sidebar-collapsed .main-content {
+  margin-left: 80px;
 }
 
 @media (max-width: 768px) {
   .main-content {
-    margin-left: 0;
+    margin-left: 0 !important;
     padding: 20px;
     padding-top: 20px;
     padding-bottom: 90px;
@@ -149,4 +153,13 @@ h1, h2, h3, h4 {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: transparent;
+}
+
+/* Premium Hover effects for Sidebar Toggle Button */
+.sidebar-toggle-btn:hover {
+  background-color: #06b6d4 !important;
+  color: #f8fafc !important;
+  border-color: rgba(6, 182, 212, 0.3) !important;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.4) !important;
 }

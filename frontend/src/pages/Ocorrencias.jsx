@@ -599,7 +599,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 100,
+    zIndex: 9999,
     backdropFilter: 'blur(4px)',
     padding: '20px',
   },

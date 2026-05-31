@@ -5,11 +5,13 @@ import {
   AlertTriangle, 
   ClipboardCheck, 
   Activity,
-  Info
+  Info,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import logo from '../assets/logo.png';
 
-export default function Sidebar({ paginaAtiva, setPaginaAtiva }) {
+export default function Sidebar({ paginaAtiva, setPaginaAtiva, collapsed, setCollapsed }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
@@ -27,6 +29,8 @@ export default function Sidebar({ paginaAtiva, setPaginaAtiva }) {
     { id: 'fiscalizacao', label: 'Fiscal', icon: ClipboardCheck },
     { id: 'sobre', label: 'Sobre', icon: Info },
   ];
+
+  const isCurrentlyCollapsed = !isMobile && collapsed;
 
   // Mobile Bottom Navigation Bar View
   if (isMobile) {
@@ -66,18 +70,93 @@ export default function Sidebar({ paginaAtiva, setPaginaAtiva }) {
     );
   }
 
+  // Estilos Computados Dinamicamente baseados no Colapso da Sidebar
+  const activeSidebarStyle = {
+    ...styles.sidebar,
+    width: isCurrentlyCollapsed ? '80px' : '260px',
+    padding: isCurrentlyCollapsed ? '24px 8px' : '24px 16px',
+    transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease',
+  };
+
+  const activeLogoContainerStyle = {
+    ...styles.logoContainer,
+    marginBottom: isCurrentlyCollapsed ? '20px' : '30px',
+    transition: 'margin-bottom 0.3s ease',
+  };
+
+  const activeLogoImageStyle = {
+    ...styles.logoImage,
+    maxHeight: isCurrentlyCollapsed ? '40px' : '105px',
+    transform: isCurrentlyCollapsed ? 'scale(0.85)' : 'scale(1)',
+    transition: 'max-height 0.3s ease, transform 0.3s ease',
+  };
+
+  const activeNavButtonStyle = (isActive) => ({
+    ...styles.navButton,
+    padding: isCurrentlyCollapsed ? '14px 0' : '14px 16px',
+    justifyContent: isCurrentlyCollapsed ? 'center' : 'flex-start',
+    ...(isActive ? styles.navButtonActive : {}),
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+  });
+
+  const activeNavIconStyle = (isActive) => ({
+    marginRight: isCurrentlyCollapsed ? '0' : '12px',
+    color: isActive ? '#06b6d4' : '#94a3b8',
+    transition: 'all 0.2s ease',
+  });
+
+  const activeLabelStyle = {
+    display: isCurrentlyCollapsed ? 'none' : 'inline',
+    opacity: isCurrentlyCollapsed ? 0 : 1,
+    transition: 'opacity 0.2s ease',
+  };
+
+  const activeFooterStyle = {
+    ...styles.footer,
+    display: isCurrentlyCollapsed ? 'none' : 'block',
+  };
+
+  const toggleButtonStyle = {
+    position: 'absolute',
+    right: '-14px',
+    top: '32px',
+    width: '28px',
+    height: '28px',
+    borderRadius: '50%',
+    backgroundColor: '#0a0d14',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
+    color: '#94a3b8',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
+    zIndex: 100,
+    transition: 'all 0.2s ease',
+  };
+
   // Desktop Standard Sidebar View
   return (
-    <aside style={styles.sidebar}>
+    <aside style={activeSidebarStyle}>
+      {/* Premium Collapse/Expand Toggle Button */}
+      <button 
+        onClick={() => setCollapsed(!collapsed)} 
+        style={toggleButtonStyle}
+        className="sidebar-toggle-btn"
+        title={collapsed ? "Expandir menu lateral" : "Recolher menu lateral"}
+      >
+        {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+      </button>
+
       {/* Header Logo */}
-      <div style={styles.logoContainer}>
+      <div style={activeLogoContainerStyle}>
         <button 
           onClick={() => setPaginaAtiva('dashboard')} 
           style={styles.logoButton}
           className="logo-btn-interactive"
           title="Ir para Visão Geral"
         >
-          <img src={logo} alt="Caminho Seguro Logo" style={styles.logoImage} />
+          <img src={logo} alt="Caminho Seguro Logo" style={activeLogoImageStyle} />
         </button>
       </div>
 
@@ -90,31 +169,27 @@ export default function Sidebar({ paginaAtiva, setPaginaAtiva }) {
             <button
               key={item.id}
               onClick={() => setPaginaAtiva(item.id)}
-              style={{
-                ...styles.navButton,
-                ...(isActive ? styles.navButtonActive : {}),
-              }}
+              style={activeNavButtonStyle(isActive)}
               className="nav-btn-interactive"
             >
               <Icon 
                 size={20} 
-                style={{
-                  marginRight: '12px',
-                  color: isActive ? '#06b6d4' : '#94a3b8',
-                  transition: 'color 0.2s ease'
-                }} 
+                style={activeNavIconStyle(isActive)} 
               />
-              <span style={{ fontWeight: isActive ? '600' : '400' }}>
-                {item.id === 'dashboard' ? 'Visão Geral' : item.id === 'mapa' ? 'Mapa de Calçadas' : item.id === 'fiscalizacao' ? 'Área do Fiscal' : item.id === 'sobre' ? 'Sobre o Projeto' : item.label}
+              <span style={{ 
+                ...activeLabelStyle,
+                fontWeight: isActive ? '600' : '400' 
+              }}>
+                {item.id === 'dashboard' ? 'Visão Geral' : item.id === 'mapa' ? 'Mapa' : item.id === 'fiscalizacao' ? 'Fiscal' : item.id === 'sobre' ? 'Sobre' : item.label}
               </span>
-              {isActive && <div style={styles.activeIndicator} />}
+              {isActive && !isCurrentlyCollapsed && <div style={styles.activeIndicator} />}
             </button>
           );
         })}
       </nav>
 
       {/* Footer Info */}
-      <div style={styles.footer}>
+      <div style={activeFooterStyle}>
         <div style={styles.odsContainer}>
           <div style={styles.odsBadge}>ODS 11</div>
           <div style={styles.odsBadgeSec}>ODS 10</div>

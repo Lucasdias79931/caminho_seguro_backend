@@ -8,6 +8,7 @@ import Sobre from './pages/Sobre';
 
 export default function App() {
   const [paginaAtiva, setPaginaAtiva] = useState('dashboard');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const renderPagina = () => {
     switch (paginaAtiva) {
@@ -27,13 +28,18 @@ export default function App() {
   };
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       {/* Decorative premium glows in background */}
       <div className="bg-glow bg-glow-right" />
       <div className="bg-glow bg-glow-left" />
 
       {/* Navigation Sidebar */}
-      <Sidebar paginaAtiva={paginaAtiva} setPaginaAtiva={setPaginaAtiva} />
+      <Sidebar 
+        paginaAtiva={paginaAtiva} 
+        setPaginaAtiva={setPaginaAtiva} 
+        collapsed={sidebarCollapsed} 
+        setCollapsed={setSidebarCollapsed} 
+      />
 
       {/* Main Content Area */}
       <main className="main-content">
