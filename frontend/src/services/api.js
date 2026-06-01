@@ -2,6 +2,7 @@
 
 // Controle global de ambiente (Chaveador Mocks / API Real)
 const USAR_API_REAL = false; 
+const SIMULAR_DELAY = false; // Mude para false se quiser remover totalmente o tempo de carregamento fake!
 const API_URL = "http://localhost:8000/api";
 
 // ----------------------------------------------------
@@ -174,8 +175,8 @@ let MOCK_INTERVENCOES = [
   }
 ];
 
-// Helper para simular delay assíncrono
-const delay = (ms = 600) => new Promise(resolve => setTimeout(resolve, ms));
+// Helper para simular delay assíncrono (respeita a flag global SIMULAR_DELAY)
+const delay = (ms = 600) => SIMULAR_DELAY ? new Promise(resolve => setTimeout(resolve, ms / 2)) : Promise.resolve();
 
 // ----------------------------------------------------
 // EXPORTAÇÃO DOS SERVIÇOS
