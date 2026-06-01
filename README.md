@@ -20,14 +20,38 @@
 
 
 
-# Como rodar
+# 3. COMO EXECUTAR O PROJETO
 
+## 🗄️ 1. Banco de Dados e Backend (PostgreSQL & Migrations)
+
+Para subir o banco de dados PostgreSQL via Docker e rodar as migrações de banco:
+
+```bash
+# Iniciar o banco de dados local via Docker
+docker compose up --build -d
+
+# Executar as migrações (criar tabelas e chaves) via Alembic
+alembic upgrade head
 ```
 
-    docker (Somente o postgres por enquanto):
+## 💻 2. Frontend Interativo (React + Vite)
 
-        docker compose up --build -d
+Para rodar a interface de usuário interativa e premium de forma local (Vite):
 
-    alembic (para criar as tabelas): alembic upgrad head
+```bash
+# 1. Navegue até a pasta do frontend
+cd frontend
 
+# 2. Instale as dependências necessárias
+npm install
+
+# 3. Inicie o servidor de desenvolvimento local
+npm run dev
 ```
+
+Após iniciar, o terminal exibirá a URL de acesso local, normalmente **`http://localhost:5173`**. Abra o link no seu navegador para explorar o ecossistema completo:
+*   **Visão Geral (Dashboard):** Painel dinâmico com gráficos e indicadores chaves de desempenho (KPIs).
+*   **Mapa de Calçadas:** Mapa interativo de barreiras urbanas com detalhes assíncronos ao clicar nos pins.
+*   **Ocorrências:** Formulário intuitivo de relato de obstáculos integrados com o escopo de ruas do banco de dados.
+*   **Área do Fiscal & Obras:** Workflow municipal simulado completo de vistoria e acionamento de equipes de reparo.
+*   **Sobre o Projeto:** Documentação e descrição da equipe de desenvolvedores.
