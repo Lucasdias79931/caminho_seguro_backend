@@ -19,4 +19,4 @@ class Rua(Nome,Descricao,ModelBase):
 
     bairro: Mapped["Bairro"] = relationship(back_populates="ruas")
 
-    obstaculos: Mapped['Obstaculo'] = relationship(back_populates="rua", cascade="all, delete-orphan")
+    obstaculos: Mapped[List['Obstaculo']] = relationship(back_populates="rua", cascade="all, delete-orphan")
