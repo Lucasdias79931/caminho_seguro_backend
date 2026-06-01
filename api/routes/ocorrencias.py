@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.dependencies import get_db
 from api.routes.common import PROBLEMA_DEFAULTS, buscar_ocorrencias
+from api.routes.intervencoes import consultar_intervencoes
 
 
 router = APIRouter(prefix="/ocorrencias", tags=["Ocorrências"])
@@ -38,6 +39,14 @@ async def obter_ocorrencia(ocorrencia_id: UUID, db: AsyncSession = Depends(get_d
     if not ocorrencias:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ocorrência não encontrada")
     return ocorrencias[0]
+
+
+@router.get("/{ocorrencia_id}/intervencoes")
+async def listar_intervencoes_da_ocorrencia(ocorrencia_id: UUID, db: AsyncSession = Depends(get_db)):
+    ocorrencias = await buscar_ocorrencias(db, ocorrencia_id=ocorrencia_id)
+    if not ocorrencias:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ocorrência não encontrada")
+    return await consultar_intervencoes(db, ocorrencia_id=ocorrencia_id)
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

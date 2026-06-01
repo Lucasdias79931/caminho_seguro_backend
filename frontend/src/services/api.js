@@ -323,6 +323,24 @@ const normalizarIntervencao = (intervencao) => ({
   orgao_nome: intervencao.orgao_nome
 });
 
+const normalizarFiscal = (fiscal) => ({
+  id: fiscal.id,
+  matricula: fiscal.matricula || "N/D",
+  nome: fiscal.nome || "Fiscal Técnico",
+  email: fiscal.email || "",
+  status: fiscal.status || "ATIVO"
+});
+
+const normalizarEquipe = (equipe) => ({
+  id: equipe.id,
+  id_orgao: equipe.id_orgao,
+  nome: equipe.nome || "Equipe Municipal",
+  especialidade: equipe.especialidade || "Manutenção urbana",
+  quantidade_membros: equipe.quantidade_membros,
+  status: equipe.status || "ATIVO",
+  orgao_nome: equipe.orgao_nome
+});
+
 // ----------------------------------------------------
 // EXPORTAÇÃO DOS SERVIÇOS
 // ----------------------------------------------------
@@ -370,25 +388,8 @@ export const RuaService = {
 export const FiscalService = {
   listar: async () => {
     return await comFallback(
-      "GET /vistorias para fiscais",
-      async () => {
-        const vistorias = await requestJson("/vistorias");
-        const fiscais = new Map();
-
-        vistorias.forEach(v => {
-          if (v.id_fiscal) {
-            fiscais.set(v.id_fiscal, {
-              id: v.id_fiscal,
-              matricula: v.fiscal_matricula || "N/D",
-              nome: v.fiscal_nome || "Fiscal Técnico",
-              email: "",
-              status: "ATIVO"
-            });
-          }
-        });
-
-        return fiscais.size > 0 ? [...fiscais.values()] : [...MOCK_FISCAIS];
-      },
+      "GET /fiscais",
+      async () => (await requestJson("/fiscais")).map(normalizarFiscal),
       () => [...MOCK_FISCAIS]
     );
   }
@@ -397,26 +398,8 @@ export const FiscalService = {
 export const EquipeService = {
   listar: async () => {
     return await comFallback(
-      "GET /intervencoes para equipes",
-      async () => {
-        const intervencoes = await requestJson("/intervencoes");
-        const equipes = new Map();
-
-        intervencoes.forEach(i => {
-          if (i.id_equipe) {
-            equipes.set(i.id_equipe, {
-              id: i.id_equipe,
-              id_orgao: null,
-              nome: i.equipe_nome || "Equipe Municipal",
-              especialidade: i.equipe_especialidade || "Manutenção urbana",
-              quantidade_membros: null,
-              status: "ATIVO"
-            });
-          }
-        });
-
-        return equipes.size > 0 ? [...equipes.values()] : [...MOCK_EQUIPES];
-      },
+      "GET /equipes",
+      async () => (await requestJson("/equipes")).map(normalizarEquipe),
       () => [...MOCK_EQUIPES]
     );
   }
@@ -617,6 +600,22 @@ export const IntervencaoService = {
   },
   
   criar: async (dados) => {
+    if (USAR_API_REAL) {
+      try {
+        return normalizarIntervencao(await requestJson("/intervencoes", {
+          method: "POST",
+          body: JSON.stringify({
+            id_vistoria: dados.id_vistoria,
+            id_equipe: dados.id_equipe,
+            custo_estimado: Number(dados.custo_estimado || 0),
+            descricao: dados.descricao
+          })
+        }));
+      } catch (err) {
+        console.warn("[API] POST /intervencoes: usando cadastro mock.", err);
+      }
+    }
+
     await delay(600);
     
     const novaIntervencao = {
@@ -636,6 +635,28 @@ export const IntervencaoService = {
   },
 
   concluir: async (idIntervencao, idOcorrencia) => {
+    if (USAR_API_REAL) {
+      try {
+        const intervencao = normalizarIntervencao(await requestJson(`/intervencoes/${idIntervencao}/concluir`, {
+          method: "PATCH",
+          body: JSON.stringify({})
+        }));
+        let ocorrencia = null;
+
+        if (idOcorrencia) {
+          try {
+            ocorrencia = normalizarOcorrencia(await requestJson(`/ocorrencias/${idOcorrencia}`));
+          } catch (err) {
+            console.warn("[API] GET /ocorrencias/{id}: não foi possível recarregar ocorrência concluída.", err);
+          }
+        }
+
+        return { intervencao, ocorrencia };
+      } catch (err) {
+        console.warn("[API] PATCH /intervencoes/{id}/concluir: usando conclusão mock.", err);
+      }
+    }
+
     await delay(500);
     const intervencao = INTERVENCOES_LOCAIS.find(i => i.id === idIntervencao)
       || MOCK_INTERVENCOES.find(i => i.id === idIntervencao);

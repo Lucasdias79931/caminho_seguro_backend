@@ -3,7 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes.bairros import router as bairros_router
 from api.routes.dashboard import router as dashboard_router
+from api.routes.equipes import router as equipes_router
 from api.routes.fiscal import router as fiscal_router
+from api.routes.fiscais import router as fiscais_router
 from api.routes.intervencoes import router as intervencoes_router
 from api.routes.obstaculos import router as obstaculos_router
 from api.routes.ocorrencias import router as ocorrencias_router
@@ -52,5 +54,7 @@ app.include_router(obstaculos_router, prefix="/api")
 app.include_router(ocorrencias_router, prefix="/api")
 app.include_router(dashboard_router, prefix="/api")
 app.include_router(fiscal_router, prefix="/api")
+app.include_router(fiscais_router, prefix="/api")
+app.include_router(equipes_router, prefix="/api")
 app.include_router(vistorias_router, prefix="/api")
 app.include_router(intervencoes_router, prefix="/api")
