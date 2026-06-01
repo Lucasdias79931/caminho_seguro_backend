@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes.bairros import router as bairros_router
+from api.routes.bd_demo import router as bd_demo_router
 from api.routes.dashboard import router as dashboard_router
 from api.routes.equipes import router as equipes_router
 from api.routes.fiscal import router as fiscal_router
@@ -49,6 +50,7 @@ async def healthcheck():
 
 
 app.include_router(bairros_router, prefix="/api")
+app.include_router(bd_demo_router, prefix="/api")
 app.include_router(ruas_router, prefix="/api")
 app.include_router(obstaculos_router, prefix="/api")
 app.include_router(ocorrencias_router, prefix="/api")
