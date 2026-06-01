@@ -48,10 +48,11 @@ export default function Fiscalizacao() {
   const carregarDados = async () => {
     try {
       setCarregando(true);
-      const [listFiscais, listEquipes, listOcorrencias, listVistorias, listIntervencoes] = await Promise.all([
+      const [listFiscais, listEquipes, listOcorrencias, listPendentes, listVistorias, listIntervencoes] = await Promise.all([
         FiscalService.listar(),
         EquipeService.listar(),
         OcorrenciaService.listar(),
+        OcorrenciaService.listarPendentes(),
         VistoriaService.listar(),
         IntervencaoService.listar()
       ]);
@@ -60,8 +61,8 @@ export default function Fiscalizacao() {
       setEquipes(listEquipes);
       setOcorrencias(listOcorrencias);
       
-      // Filtra ocorrências que necessitam de vistoria (Aberto ou Em Vistoria)
-      setOcorrenciasPendentes(listOcorrencias.filter(o => o.status !== 'RESOLVIDO'));
+      // Usa endpoint específico da área fiscal para pendências.
+      setOcorrenciasPendentes(listPendentes);
       setVistoriasRealizadas(listVistorias);
       setIntervencoes(listIntervencoes);
       
@@ -331,7 +332,7 @@ export default function Fiscalizacao() {
                       <div style={styles.intervHeader}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <Wrench size={16} color="#3b82f6" style={{ marginRight: '6px' }} />
-                          <span style={styles.intervTitle}>Equipe Acionada: {obterNomeEquipe(intervencaoDaVistoria.id_equipe)}</span>
+                          <span style={styles.intervTitle}>Equipe Acionada: {intervencaoDaVistoria.equipe_nome || obterNomeEquipe(intervencaoDaVistoria.id_equipe)}</span>
                         </div>
                         <span 
                           style={{

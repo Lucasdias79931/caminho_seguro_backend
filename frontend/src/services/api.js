@@ -1,9 +1,9 @@
 // src/services/api.js
 
 // Controle global de ambiente (Chaveador Mocks / API Real)
-const USAR_API_REAL = false; 
+const USAR_API_REAL = true; 
 const SIMULAR_DELAY = false; // Mude para false se quiser remover totalmente o tempo de carregamento fake!
-const API_URL = "http://localhost:8000/api";
+const API_URL = "http://127.0.0.1:8000/api";
 
 // ----------------------------------------------------
 // BANCO DE DADOS EM MEMÓRIA (MOCK DATA)
@@ -175,8 +175,153 @@ let MOCK_INTERVENCOES = [
   }
 ];
 
+let INTERVENCOES_LOCAIS = [];
+
 // Helper para simular delay assíncrono (respeita a flag global SIMULAR_DELAY)
 const delay = (ms = 600) => SIMULAR_DELAY ? new Promise(resolve => setTimeout(resolve, ms / 2)) : Promise.resolve();
+
+const requestJson = async (path, options = {}) => {
+  const res = await fetch(`${API_URL}${path}`, {
+    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+    ...options
+  });
+
+  if (!res.ok) {
+    const detalhe = await res.text().catch(() => "");
+    throw new Error(`Erro HTTP ${res.status} em ${path}: ${detalhe}`);
+  }
+
+  return await res.json();
+};
+
+const comFallback = async (label, chamadaApi, fallback) => {
+  if (USAR_API_REAL) {
+    try {
+      return await chamadaApi();
+    } catch (err) {
+      console.warn(`[API] ${label}: usando fallback mock.`, err);
+    }
+  }
+
+  await delay();
+  return typeof fallback === "function" ? fallback() : fallback;
+};
+
+const normalizarBairro = (bairro) => ({
+  id: bairro.id,
+  nome: bairro.nome,
+  descricao: bairro.descricao || "",
+  status: bairro.status || "ATIVO"
+});
+
+const normalizarRua = (rua) => ({
+  id: rua.id,
+  id_bairro: rua.id_bairro || rua.bairro_id || rua.bairro?.id,
+  cep: String(rua.cep || "").trim(),
+  nome: rua.nome,
+  descricao: rua.descricao || "",
+  status: rua.status || "ATIVO",
+  bairro_nome: rua.bairro_nome || rua.bairro?.nome
+});
+
+const pavimentacaoLabel = (codigo) => {
+  if (!codigo) return "Boa";
+  if (codigo.includes("BURACO") || codigo.includes("DANIFICADA") || codigo.includes("ABANDONADA")) return "Precária";
+  if (codigo.includes("RACHADURA")) return "Regular";
+  return "Regular";
+};
+
+const iluminacaoLabel = (codigo) => codigo ? "Ruim" : "Boa";
+
+const saneamentoLabel = (codigo) => {
+  if (!codigo) return "Adequado";
+  if (codigo.includes("SEM_TAMPA")) return "Sem bueiro/aberto";
+  return "Prejudicado";
+};
+
+const zeladoriaLabel = (codigo) => codigo ? "Precária" : "Adequada";
+
+const diagnosticoObstaculo = (obstaculo = {}) => ({
+  pavimentacao: pavimentacaoLabel(obstaculo.pavimentacao),
+  iluminacao: iluminacaoLabel(obstaculo.iluminacao),
+  saneamento: saneamentoLabel(obstaculo.saneamento),
+  zeladoria: zeladoriaLabel(obstaculo.zeladoria)
+});
+
+const tipoProblemaPayload = (dados) => {
+  if (dados.pavimentacao === "Precária" || dados.pavimentacao === "Destruída") return "pavimentacao";
+  if (dados.iluminacao === "Ruim") return "iluminacao";
+  if (dados.saneamento && dados.saneamento !== "Adequado") return "saneamento";
+  if (dados.zeladoria === "Precária") return "zeladoria";
+  return "pavimentacao";
+};
+
+const normalizarOcorrencia = (ocorrencia) => {
+  const bairro = normalizarBairro(ocorrencia.bairro || ocorrencia.obstaculo?.bairro || {});
+  const rua = normalizarRua({ ...(ocorrencia.rua || ocorrencia.obstaculo?.rua || {}), bairro });
+  const obstaculoApi = ocorrencia.obstaculo || {};
+  const diagnostico = diagnosticoObstaculo(obstaculoApi);
+
+  return {
+    id: ocorrencia.id,
+    id_obstaculo: ocorrencia.id_obstaculo || obstaculoApi.id,
+    id_cidadao: ocorrencia.id_cidadao || ocorrencia.cidadao?.id,
+    id_orgao: ocorrencia.id_orgao || ocorrencia.orgao?.id,
+    descricao: ocorrencia.descricao || "",
+    status: ocorrencia.status || "ABERTO",
+    imagem_url: ocorrencia.imagem_url || "",
+    created_at: ocorrencia.created_at || ocorrencia.data_criacao,
+    updated_at: ocorrencia.updated_at || ocorrencia.data_atualizacao || ocorrencia.data_criacao,
+    gravidade: ocorrencia.gravidade || "ALTA",
+    tipo_obstaculo: ocorrencia.tipo_obstaculo,
+    obstaculo: {
+      id: obstaculoApi.id,
+      id_rua: obstaculoApi.id_rua || rua.id,
+      descricao: obstaculoApi.descricao || ocorrencia.descricao || "",
+      ...diagnostico,
+      rua,
+      bairro
+    },
+    cidadao: {
+      id: ocorrencia.cidadao?.id,
+      nome: ocorrencia.cidadao?.nome || "Cidadão",
+      email: ocorrencia.cidadao?.email || ""
+    },
+    orgao: ocorrencia.orgao || null,
+    fiscal: ocorrencia.fiscal || null,
+    vistoria: ocorrencia.vistoria || null,
+    intervencao: ocorrencia.intervencao || null
+  };
+};
+
+const normalizarVistoria = (vistoria) => ({
+  id: vistoria.id,
+  id_ocorrencia: vistoria.id_ocorrencia,
+  id_fiscal: vistoria.id_fiscal || vistoria.fiscal?.id,
+  laudo: vistoria.laudo,
+  prazo_adequacao: vistoria.prazo_adequacao,
+  status: vistoria.status === "ATIVO" ? "CONFIRMADO" : (vistoria.status || "CONFIRMADO"),
+  created_at: vistoria.created_at,
+  fiscal: {
+    id: vistoria.id_fiscal || vistoria.fiscal?.id,
+    nome: vistoria.fiscal_nome || vistoria.fiscal?.nome || "Fiscal Técnico",
+    matricula: vistoria.fiscal_matricula || vistoria.fiscal?.matricula || "N/D"
+  }
+});
+
+const normalizarIntervencao = (intervencao) => ({
+  id: intervencao.id,
+  id_vistoria: intervencao.id_vistoria,
+  id_equipe: intervencao.id_equipe,
+  custo_estimado: Number(intervencao.custo_estimado || 0),
+  data_registro: intervencao.data_registro,
+  data_conclusao: intervencao.data_conclusao,
+  status: intervencao.data_conclusao ? "CONCLUIDO" : (intervencao.status === "ATIVO" ? "EM_ANDAMENTO" : intervencao.status),
+  descricao: intervencao.descricao || "",
+  equipe_nome: intervencao.equipe_nome,
+  equipe_especialidade: intervencao.equipe_especialidade,
+  orgao_nome: intervencao.orgao_nome
+});
 
 // ----------------------------------------------------
 // EXPORTAÇÃO DOS SERVIÇOS
@@ -184,71 +329,140 @@ const delay = (ms = 600) => SIMULAR_DELAY ? new Promise(resolve => setTimeout(re
 
 export const BairroService = {
   listar: async () => {
-    if (USAR_API_REAL) {
-      const res = await fetch(`${API_URL}/bairros`);
-      return await res.json();
-    }
-    await delay();
-    return [...MOCK_BAIRROS];
+    return await comFallback(
+      "GET /bairros",
+      async () => (await requestJson("/bairros")).map(normalizarBairro),
+      () => [...MOCK_BAIRROS]
+    );
   },
   obterEstatisticas: async () => {
-    await delay(300);
-    // Retorna dados estatísticos agregados para os gráficos
-    return MOCK_BAIRROS.map(b => {
-      const ocorrenciasDoBairro = MOCK_OCORRENCIAS.filter(oc => oc.obstaculo.bairro.id === b.id);
-      return {
-        bairro: b.nome,
-        total: ocorrenciasDoBairro.length,
-        abertas: ocorrenciasDoBairro.filter(oc => oc.status === "ABERTO").length,
-        resolvidas: ocorrenciasDoBairro.filter(oc => oc.status === "RESOLVIDO").length
-      };
-    });
+    return await comFallback(
+      "GET /dashboard/bairros-criticos",
+      async () => (await requestJson("/dashboard/bairros-criticos")).map(item => ({
+        bairro: item.bairro,
+        total: item.total_ocorrencias,
+        abertas: item.total_ocorrencias,
+        resolvidas: 0
+      })),
+      () => MOCK_BAIRROS.map(b => {
+        const ocorrenciasDoBairro = MOCK_OCORRENCIAS.filter(oc => oc.obstaculo.bairro.id === b.id);
+        return {
+          bairro: b.nome,
+          total: ocorrenciasDoBairro.length,
+          abertas: ocorrenciasDoBairro.filter(oc => oc.status === "ABERTO").length,
+          resolvidas: ocorrenciasDoBairro.filter(oc => oc.status === "RESOLVIDO").length
+        };
+      })
+    );
   }
 };
 
 export const RuaService = {
   listar: async () => {
-    if (USAR_API_REAL) {
-      const res = await fetch(`${API_URL}/ruas`);
-      return await res.json();
-    }
-    await delay();
-    return [...MOCK_RUAS];
+    return await comFallback(
+      "GET /ruas",
+      async () => (await requestJson("/ruas")).map(normalizarRua),
+      () => [...MOCK_RUAS]
+    );
   }
 };
 
 export const FiscalService = {
   listar: async () => {
-    await delay();
-    return [...MOCK_FISCAIS];
+    return await comFallback(
+      "GET /vistorias para fiscais",
+      async () => {
+        const vistorias = await requestJson("/vistorias");
+        const fiscais = new Map();
+
+        vistorias.forEach(v => {
+          if (v.id_fiscal) {
+            fiscais.set(v.id_fiscal, {
+              id: v.id_fiscal,
+              matricula: v.fiscal_matricula || "N/D",
+              nome: v.fiscal_nome || "Fiscal Técnico",
+              email: "",
+              status: "ATIVO"
+            });
+          }
+        });
+
+        return fiscais.size > 0 ? [...fiscais.values()] : [...MOCK_FISCAIS];
+      },
+      () => [...MOCK_FISCAIS]
+    );
   }
 };
 
 export const EquipeService = {
   listar: async () => {
-    await delay();
-    return [...MOCK_EQUIPES];
+    return await comFallback(
+      "GET /intervencoes para equipes",
+      async () => {
+        const intervencoes = await requestJson("/intervencoes");
+        const equipes = new Map();
+
+        intervencoes.forEach(i => {
+          if (i.id_equipe) {
+            equipes.set(i.id_equipe, {
+              id: i.id_equipe,
+              id_orgao: null,
+              nome: i.equipe_nome || "Equipe Municipal",
+              especialidade: i.equipe_especialidade || "Manutenção urbana",
+              quantidade_membros: null,
+              status: "ATIVO"
+            });
+          }
+        });
+
+        return equipes.size > 0 ? [...equipes.values()] : [...MOCK_EQUIPES];
+      },
+      () => [...MOCK_EQUIPES]
+    );
   }
 };
 
 export const OcorrenciaService = {
   listar: async () => {
-    if (USAR_API_REAL) {
-      const res = await fetch(`${API_URL}/ocorrencias`);
-      return await res.json();
-    }
-    await delay(800); // Maior latência na listagem principal
-    return [...MOCK_OCORRENCIAS].reverse(); // Recentes primeiro
+    return await comFallback(
+      "GET /ocorrencias",
+      async () => (await requestJson("/ocorrencias")).map(normalizarOcorrencia),
+      async () => {
+        await delay(800);
+        return [...MOCK_OCORRENCIAS].reverse();
+      }
+    );
+  },
+
+  listarPendentes: async () => {
+    return await comFallback(
+      "GET /fiscal/pendentes",
+      async () => (await requestJson("/fiscal/pendentes")).map(normalizarOcorrencia),
+      async () => {
+        await delay(500);
+        return [...MOCK_OCORRENCIAS].filter(o => o.status !== "RESOLVIDO").reverse();
+      }
+    );
   },
   
   cadastrar: async (dados) => {
     if (USAR_API_REAL) {
-      const res = await fetch(`${API_URL}/ocorrencias`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dados)
-      });
-      return await res.json();
+      try {
+        const payload = {
+          id_rua: dados.id_rua,
+          descricao: dados.descricao,
+          nome_cidadao: dados.nome_cidadao || "Cidadão Anônimo",
+          email_cidadao: dados.email_cidadao || "anonimo@caminhoseguro.local",
+          tipo_problema: tipoProblemaPayload(dados),
+          descricao_obstaculo: dados.titulo_obstaculo || dados.descricao
+        };
+        return normalizarOcorrencia(await requestJson("/ocorrencias", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        }));
+      } catch (err) {
+        console.warn("[API] POST /ocorrencias: usando cadastro mock.", err);
+      }
     }
     
     await delay(700);
@@ -288,36 +502,56 @@ export const OcorrenciaService = {
   },
 
   obterEstatisticasGerais: async () => {
-    await delay(400);
-    const total = MOCK_OCORRENCIAS.length;
-    const abertas = MOCK_OCORRENCIAS.filter(o => o.status === "ABERTO").length;
-    const vistoria = MOCK_OCORRENCIAS.filter(o => o.status === "EM_VISTORIA").length;
-    const resolvidas = MOCK_OCORRENCIAS.filter(o => o.status === "RESOLVIDO").length;
-    
-    return {
-      total,
-      abertas,
-      emVistoria: vistoria,
-      resolvidas,
-      indiceAcessibilidade: Math.round((resolvidas / (total || 1)) * 100)
-    };
+    return await comFallback(
+      "GET /dashboard/resumo",
+      async () => {
+        const resumo = await requestJson("/dashboard/resumo");
+        return {
+          total: resumo.total_ocorrencias,
+          abertas: resumo.abertas,
+          emVistoria: resumo.em_vistoria,
+          resolvidas: resumo.resolvidas,
+          indiceAcessibilidade: Math.round(resumo.indice_resolucao || 0)
+        };
+      },
+      async () => {
+        await delay(400);
+        const total = MOCK_OCORRENCIAS.length;
+        const abertas = MOCK_OCORRENCIAS.filter(o => o.status === "ABERTO").length;
+        const vistoria = MOCK_OCORRENCIAS.filter(o => o.status === "EM_VISTORIA").length;
+        const resolvidas = MOCK_OCORRENCIAS.filter(o => o.status === "RESOLVIDO").length;
+        
+        return {
+          total,
+          abertas,
+          emVistoria: vistoria,
+          resolvidas,
+          indiceAcessibilidade: Math.round((resolvidas / (total || 1)) * 100)
+        };
+      }
+    );
   }
 };
 
 export const VistoriaService = {
   listar: async () => {
-    await delay();
-    return [...MOCK_VISTORIAS];
+    return await comFallback(
+      "GET /vistorias",
+      async () => (await requestJson("/vistorias")).map(normalizarVistoria),
+      () => [...MOCK_VISTORIAS]
+    );
   },
   
   criar: async (dados) => {
     if (USAR_API_REAL) {
-      const res = await fetch(`${API_URL}/vistorias`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dados)
-      });
-      return await res.json();
+      try {
+        return normalizarVistoria(await requestJson("/vistorias", {
+          method: "POST",
+          body: JSON.stringify(dados)
+        }));
+      } catch (err) {
+        console.warn("[API] POST /vistorias: usando cadastro mock.", err);
+      }
     }
     
     await delay(600);
@@ -348,6 +582,23 @@ export const VistoriaService = {
   },
 
   obterLaudoPorOcorrencia: async (idOcorrencia) => {
+    if (USAR_API_REAL) {
+      try {
+        const ocorrencia = await requestJson(`/ocorrencias/${idOcorrencia}`);
+        if (!ocorrencia.vistoria) return null;
+
+        return normalizarVistoria({
+          ...ocorrencia.vistoria,
+          id_ocorrencia: idOcorrencia,
+          id_fiscal: ocorrencia.fiscal?.id,
+          fiscal_nome: ocorrencia.fiscal?.nome,
+          fiscal_matricula: ocorrencia.fiscal?.matricula
+        });
+      } catch (err) {
+        console.warn("[API] GET /ocorrencias/{id}: usando laudo mock.", err);
+      }
+    }
+
     await delay(300);
     return MOCK_VISTORIAS.find(v => v.id_ocorrencia === idOcorrencia) || null;
   }
@@ -355,8 +606,14 @@ export const VistoriaService = {
 
 export const IntervencaoService = {
   listar: async () => {
-    await delay();
-    return [...MOCK_INTERVENCOES];
+    return await comFallback(
+      "GET /intervencoes",
+      async () => {
+        const remotas = (await requestJson("/intervencoes")).map(normalizarIntervencao);
+        return [...INTERVENCOES_LOCAIS, ...remotas];
+      },
+      () => [...INTERVENCOES_LOCAIS, ...MOCK_INTERVENCOES]
+    );
   },
   
   criar: async (dados) => {
@@ -373,15 +630,15 @@ export const IntervencaoService = {
       descricao: dados.descricao
     };
     
-    MOCK_INTERVENCOES.push(novaIntervencao);
+    INTERVENCOES_LOCAIS.push(novaIntervencao);
     
-    // Opcional: Se criar intervenção já puder marcar ocorrência como andamento/resolvido
     return novaIntervencao;
   },
 
   concluir: async (idIntervencao, idOcorrencia) => {
     await delay(500);
-    const intervencao = MOCK_INTERVENCOES.find(i => i.id === idIntervencao);
+    const intervencao = INTERVENCOES_LOCAIS.find(i => i.id === idIntervencao)
+      || MOCK_INTERVENCOES.find(i => i.id === idIntervencao);
     if (intervencao) {
       intervencao.status = "CONCLUIDO";
       intervencao.data_conclusao = new Date().toISOString();
