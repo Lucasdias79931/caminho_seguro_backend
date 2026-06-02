@@ -5,7 +5,7 @@ class STATUS(str, Enum):
     ATIVO = "ATIVO"
     INATIVO = "INATIVO"
     PENDENTE = "PENDENTE"
-    "RESOLVIDO" = "RESOLVIDO"
+    RESOLVIDO = "RESOLVIDO"
     
     
 
